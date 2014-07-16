@@ -1,4 +1,4 @@
-# Collection
+# Solution10\Collection Usage
 
 Like Arrays. Only better!
 
@@ -10,6 +10,7 @@ Collections allow you to splice your array and return a subset, just by passing 
 But more on that later, let's start with the basics
 
 ## Creating and Populating
+
 Creating an instance of Collection is simple:
 
     // Create a new, empty collection:
@@ -84,6 +85,7 @@ To count how many items are in a collection, we can use count():
 Splicing allows you to quickly retrieve a subset of the collection based on its numeric indexes. If it's numerically indexed that is.
 
 ### Basic Splicing
+
 Splicing involves accessing a key in the Collection of the format start:end where start and end are numeric indexes in the collection.
 
 **Splicing is 1-indexed!** - Don't forget this!
