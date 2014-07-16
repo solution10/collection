@@ -1,5 +1,6 @@
 install:
-    - composer install
+    - composer self-update
+    - composer install --no-dev
 language: php
 php:
   - 5.3
