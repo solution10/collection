@@ -2,7 +2,8 @@
 
 Like Arrays. Only better!
 
-[Travis-CI](https://travis-ci.org/Solution10/collection.svg?branch=master)
+[![Build Status](https://travis-ci.org/Solution10/collection.svg?branch=master)](https://travis-ci.org/Solution10/collection)
+[![Coverage Status](https://coveralls.io/repos/Solution10/collection/badge.png)](https://coveralls.io/r/Solution10/collection)
 
 ## What does this do?
 
