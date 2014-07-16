@@ -250,5 +250,5 @@ If you need to get your data out of a collection and into a standard array, you 
 
     $collection->keys(); // Returns the keys of the collection in an array
     $collection->values(); // Returns the values (no keys) of the collection
-    $collection->to_array(); // Returns the keys and values in a single array.
+    $collection->toArray(); // Returns the keys and values in a single array.
 
