@@ -2,6 +2,8 @@
 
 Like Arrays. Only better!
 
+[Travis-CI](https://travis-ci.org/Solution10/collection.svg?branch=master)
+
 ## What does this do?
 
 Collections, at their core, are implementations of Iterator, ArrayAccess and Countable. But they're also a lot more than that.
