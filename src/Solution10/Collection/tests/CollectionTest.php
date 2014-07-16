@@ -33,7 +33,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             'Item1', 'Item2', 'Item3',
         ));
 
-        $this->assertEquals('Collection', get_class($collection));
+        $this->assertEquals('Solution10\\Collection\\Collection', get_class($collection));
     }
 
     /**
@@ -42,7 +42,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     public function testEmptyContructor()
     {
         $collection = new Collection();
-        $this->assertEquals('Collection', get_class($collection));
+        $this->assertEquals('Solution10\\Collection\\Collection', get_class($collection));
     }
 
     /**
@@ -286,7 +286,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Testing to_array()
+     * Testing toArray()
      */
     public function testToArray()
     {
@@ -294,7 +294,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             'Apple', 'Orange', 'Banana',
         ));
 
-        $arr = $collection->to_array();
+        $arr = $collection->toArray();
 
         $this->assertEquals('Apple', $arr[0]);
         $this->assertEquals('Orange', $arr[1]);
@@ -403,7 +403,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             ),
         ));
 
-        $collection->sort_by_member('name', Collection::SORT_ASC);
+        $collection->sortByMember('name', Collection::SORT_ASC);
         $this->assertEquals('Alex', $collection[0]['name']);
         $this->assertEquals('Developer', $collection[0]['job']);
         $this->assertEquals('Kelly', $collection[2]['name']);
@@ -430,7 +430,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             ),
         ));
 
-        $collection->sort_by_member('name', Collection::SORT_DESC);
+        $collection->sortByMember('name', Collection::SORT_DESC);
         $this->assertEquals('Alex', $collection[2]['name']);
         $this->assertEquals('Developer', $collection[2]['job']);
         $this->assertEquals('Kelly', $collection[0]['name']);
@@ -459,7 +459,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             $obj1, $obj2, $obj3,
         ));
 
-        $collection->sort_by_member('name', Collection::SORT_ASC);
+        $collection->sortByMember('name', Collection::SORT_ASC);
         $this->assertEquals('Alex', $collection[0]->name);
         $this->assertEquals('Developer', $collection[0]->job);
         $this->assertEquals('Kelly', $collection[2]->name);
@@ -487,7 +487,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             $obj1, $obj2, $obj3,
         ));
 
-        $collection->sort_by_member('name', Collection::SORT_DESC);
+        $collection->sortByMember('name', Collection::SORT_DESC);
         $this->assertEquals('Alex', $collection[2]->name);
         $this->assertEquals('Developer', $collection[2]->job);
         $this->assertEquals('Kelly', $collection[0]->name);
@@ -524,7 +524,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             $obj1, $obj2, $obj3,
         ));
 
-        $collection->sort_by_member('sort', Collection::SORT_ASC);
+        $collection->sortByMember('sort', Collection::SORT_ASC);
         $this->assertEquals('Alex', $collection[0]->name);
         $this->assertEquals('Developer', $collection[0]->job);
         $this->assertEquals('Kelly', $collection[2]->name);
@@ -561,7 +561,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             $obj1, $obj2, $obj3,
         ));
 
-        $collection->sort_by_member('sort', Collection::SORT_DESC);
+        $collection->sortByMember('sort', Collection::SORT_DESC);
         $this->assertEquals('Alex', $collection[2]->name);
         $this->assertEquals('Developer', $collection[2]->job);
         $this->assertEquals('Kelly', $collection[0]->name);
@@ -589,7 +589,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             $obj1, $obj2, $obj3,
         ));
 
-        $collection->sort_by_member('sort', Collection::SORT_ASC);
+        $collection->sortByMember('sort', Collection::SORT_ASC);
         $this->assertEquals('Alex', $collection[0]->name);
         $this->assertEquals('Developer', $collection[0]->job);
         $this->assertEquals('Kelly', $collection[2]->name);
@@ -617,7 +617,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             $obj1, $obj2, $obj3,
         ));
 
-        $collection->sort_by_member('sort', Collection::SORT_DESC);
+        $collection->sortByMember('sort', Collection::SORT_DESC);
         $this->assertEquals('Alex', $collection[2]->name);
         $this->assertEquals('Developer', $collection[2]->job);
         $this->assertEquals('Kelly', $collection[0]->name);
@@ -644,7 +644,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             ),
         ));
 
-        $collection->sort_by_member('name', Collection::SORT_ASC_PRESERVE_KEYS);
+        $collection->sortByMember('name', Collection::SORT_ASC_PRESERVE_KEYS);
         $keys = $collection->keys();
         $this->assertEquals('orange', $keys[0]);
         $this->assertEquals('apple', $keys[2]);
@@ -670,7 +670,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             ),
         ));
 
-        $collection->sort_by_member('name', Collection::SORT_DESC_PRESERVE_KEYS);
+        $collection->sortByMember('name', Collection::SORT_DESC_PRESERVE_KEYS);
         $keys = $collection->keys();
         $this->assertEquals('orange', $keys[2]);
         $this->assertEquals('apple', $keys[0]);
@@ -691,7 +691,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Testing unknown sort_by_member exceptions
+     * Testing unknown sortByMember exceptions
      *
      * @expectedException \Solution10\Collection\Exception\Exception
      */
@@ -712,7 +712,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             ),
         ));
 
-        $collection->sort_by_member('name', 999);
+        $collection->sortByMember('name', 999);
     }
 
     /**
@@ -737,7 +737,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             ),
         ));
 
-        $collection->sort_by_member('unknown');
+        $collection->sortByMember('unknown');
     }
 
     /**
@@ -763,6 +763,6 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             $obj1, $obj2, $obj3,
         ));
 
-        $collection->sort_by_member('unknown');
+        $collection->sortByMember('unknown');
     }
 }
