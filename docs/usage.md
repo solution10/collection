@@ -191,7 +191,7 @@ So, for example:
         ),
     ));
 
-    $collection->sort_by_member('name', Collection::SORT_ASC);
+    $collection->sortByMember('name', Collection::SORT_ASC);
 
     // The collection now has the array('name' => 'Alex' ...) item first and the array('name' => 'Tracy' ...) item last!
 
@@ -207,7 +207,7 @@ Sorting by a property in contained objects:
         $obj, $obj2
     ));
 
-    $collection->sort_by_member('name', Collection::SORT_ASC);
+    $collection->sortByMember('name', Collection::SORT_ASC);
 
     // Forest is now first in the collection, with Jenny in second.
 
@@ -231,7 +231,7 @@ You can also sort by the result of a function:
 
     $collection = new Collection(array($product1, $product2));
 
-    $collection->sort_by_member('price_with_vat', Collection::SORT_ASC);
+    $collection->sortByMember('price_with_vat', Collection::SORT_ASC);
 
     // $product2 is now first in the array with $product1 second.
 
@@ -242,7 +242,7 @@ The following exceptions can be thrown during sorting:
 |Exception	                                | Reason                                                                    |
 |-------------------------------------------|---------------------------------------------------------------------------|
 |Solution10\Collection\Exception\Exception  | Asking for an unknown sort direction.                                     |
-|Solution10\Collection\Exception\Index      | Asking for a sort_by_member on an unknown index / property / function.    |
+|Solution10\Collection\Exception\Index      | Asking for a sortByMember on an unknown index / property / function.    |
 
 ## Getting data back (keys and values)
 
