@@ -16,47 +16,55 @@ Collections, at their core, are implementations of Iterator, ArrayAccess and Cou
 
 Splice subsections of arrays simply by passing keys:
 
-    $collection = new Collection(array('Apple', 'Orange', 'Banana'));
-    $subset = $collection['1:2'];
-    // $subset is now: array('Apple', 'Orange')
+```php
+$collection = new Collection(array('Apple', 'Orange', 'Banana'));
+$subset = $collection['1:2'];
+// $subset is now: array('Apple', 'Orange')
 
-    $collection = new Collection(array('Apple', 'Orange', 'Banana'));
-    $subset = $collection['-2:2'];
-    // $subset contains ('Orange', 'Banana')
+$collection = new Collection(array('Apple', 'Orange', 'Banana'));
+$subset = $collection['-2:2'];
+// $subset contains ('Orange', 'Banana')
 
-    $collection = new Collection(array('Apple', 'Orange', 'Banana', 'Grapes'));
-    $subset = $collection[':LAST'];
-    // $subset is simply array('Grapes')
+$collection = new Collection(array('Apple', 'Orange', 'Banana', 'Grapes'));
+$subset = $collection[':LAST'];
+// $subset is simply array('Grapes')
+```
 
 Quickly and easily Sort
 
-    $collection = new Collection(array(100, 50, 70, 10));
-    $collection->sort(Collection::SORT_ASC);
-    // $collection's order is now: 10, 50, 70, 100
+```php
+$collection = new Collection(array(100, 50, 70, 10));
+$collection->sort(Collection::SORT_ASC);
+// $collection's order is now: 10, 50, 70, 100
 
-    $collection = new Collection(array(
-        array(
-            'name' => 'Sarah',
-            'job' => 'Manager',
-        ),
-        array(
-            'name' => 'Alex',
-            'job' => 'Developer',
-        ),
-        array(
-            'name' => 'Tracy',
-            'job' => 'HR'
-        ),
-    ));
-    $collection->sortByMember('name', Collection::SORT_ASC);
+$collection = new Collection(array(
+    array(
+        'name' => 'Sarah',
+        'job' => 'Manager',
+    ),
+    array(
+        'name' => 'Alex',
+        'job' => 'Developer',
+    ),
+    array(
+        'name' => 'Tracy',
+        'job' => 'HR'
+    ),
+));
+$collection->sortByMember('name', Collection::SORT_ASC);
+```
+
+For full feature list, [check out the docs](http://github.com/Solution10/collection/wiki).
 
 ## Installation
 
 Install via composer:
 
-    "require": {
-        "solution10/collection": "1.*"
-    }
+```json
+"require": {
+    "solution10/collection": "1.*"
+}
+```
 
 ## Requirements
 
@@ -66,7 +74,12 @@ That's it!
 
 ## Documentation
 
-See the [docs/ folder in the repo](http://github.com/solution10/collection/tree/master/docs).
+See the [Github Wiki](http://github.com/Solution10/collection/wiki)
+or the [docs/ folder in the repo](http://github.com/solution10/collection/tree/master/docs).
+
+To get api docs; from a checkout of the project run:
+
+    $ make && open api/index.html
 
 ## License
 
