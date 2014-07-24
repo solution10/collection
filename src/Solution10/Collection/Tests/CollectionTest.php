@@ -61,7 +61,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(3, count($this->collection));
     }
 
-    /**
+    /*
      * -------------- Selector Tests ----------------
      */
 
@@ -156,7 +156,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     }
 
 
-    /**
+    /*
      * -------------------- Splicing tests, of which there are many -----------------
      */
 
@@ -247,7 +247,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Item3', $splice);
     }
 
-    /**
+    /*
      * ----------------- Keys and Values Tests ------------------------
      */
 
@@ -302,7 +302,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     }
 
 
-    /**
+    /*
      * ----------------- Sorting Tests ------------------------
      */
 
@@ -764,5 +764,62 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         ));
 
         $collection->sortByMember('unknown');
+    }
+
+    /*
+     * ------------- Testing Cycling Behaviour --------------
+     */
+
+    public function testSetGetCyclePosition()
+    {
+        $c = new Collection(array('Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'));
+        $this->assertEquals(0, $c->cyclePosition());
+        $c->setCyclePosition(3);
+        $this->assertEquals(3, $c->cyclePosition());
+    }
+
+    public function testSetGetCyclePositionUnderBounds()
+    {
+        $c = new Collection(array('Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'));
+        $this->assertEquals(0, $c->cyclePosition());
+        $c->setCyclePosition(-4);
+        $this->assertEquals(0, $c->cyclePosition());
+    }
+
+    public function testSetGetCyclePositionOverBounds()
+    {
+        $c = new Collection(array('Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'));
+        $this->assertEquals(0, $c->cyclePosition());
+        $c->setCyclePosition(8);
+        $this->assertEquals(6, $c->cyclePosition());
+    }
+
+    public function testCycleForwardWithinBounds()
+    {
+        $c = new Collection(array('Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'));
+        $this->assertEquals('Tues', $c->cycleForward(1));
+        $this->assertEquals('Sat', $c->cycleForward(4));
+    }
+
+    public function testCycleForwardOverBounds()
+    {
+        $c = new Collection(array('Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'));
+        $this->assertEquals('Mon', $c->cycleForward(7));
+        $this->assertEquals('Thurs', $c->cycleForward(10));
+    }
+
+    public function testCycleBackwardWithinBounds()
+    {
+        $c = new Collection(array('Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'));
+        $c->setCyclePosition(5);
+        $this->assertEquals('Fri', $c->cycleBackward(1));
+        $this->assertEquals('Mon', $c->cycleBackward(4));
+    }
+
+    public function testCycleBackwardOverBounds()
+    {
+        $c = new Collection(array('Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'));
+        $this->assertEquals('Mon', $c->cycleBackward(7));
+        $this->assertEquals('Fri', $c->cycleBackward(10));
     }
 }

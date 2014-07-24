@@ -32,6 +32,12 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
     protected $selectors = array();
 
     /**
+     * @var     int     Current position of the cycle
+     * @see self::cycleForward() and self::cycleBackward())
+     */
+    protected $cyclePosition = 0;
+
+    /**
      * Constructor
      * Optionally pass in an array to start your Collection.
      *
@@ -95,7 +101,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
         throw new Exception\Index('Unknown index: ' . $key);
     }
 
-    /**
+    /*
      * ------------------------ Countable Implementation ---------------------------
      */
 
@@ -111,7 +117,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
     }
 
 
-    /**
+    /*
      * ----------------------- Array Access Implementation -------------------------
      */
 
@@ -194,7 +200,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
     }
 
 
-    /**
+    /*
      * ---------------------- Array Access Implementation ----------------------------
      */
 
@@ -261,7 +267,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
     }
 
 
-    /**
+    /*
      * ---------------------------------- Sorting -----------------------------------
      */
 
@@ -379,5 +385,93 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
         $this->contents = $new_contents;
 
         return $this;
+    }
+
+    /*
+     * ------------------ Providing Cycling Functionality ------------------
+     */
+
+    /**
+     * Sets the cycle position. NOTE: this is 0-indexed. If you set OVER the bounds of the
+     * collection, it'll set to the last item. Set under the bounds (ie a negative number)
+     * and it'll set to 0.
+     *
+     * @param   int     $position   Cycle position
+     * @return  $this
+     */
+    public function setCyclePosition($position)
+    {
+        if ($position >= $this->count()) {
+            $this->cyclePosition = $this->count() - 1;
+        } elseif ($position < 0) {
+            $this->cyclePosition = 0;
+        } else {
+            $this->cyclePosition = (int)$position;
+        }
+        return $this;
+    }
+
+    /**
+     * Gets the current cycle index. This doesn't count loops round or anything,
+     * just the index in the contents of the collection.
+     *
+     * @return  int
+     */
+    public function cyclePosition()
+    {
+        return $this->cyclePosition;
+    }
+
+    /**
+     * "Cycles" the collection forward. What this means is that the Collection
+     * will move forward a given number of positions. If it reaches the end
+     * of the collection it will wrap back to the beginning.
+     *
+     * NOTE: This *does not* affect the main array pointer OR iterators OR arrayaccess.
+     *
+     * @param   int     $advance    Number of positions forward to advance
+     * @return  mixed   The value of the Collection at this point.
+     */
+    public function cycleForward($advance = 1)
+    {
+        for ($i = 0; $i < $advance; $i ++) {
+            if ($this->cyclePosition == $this->count()-1) {
+                $this->cyclePosition = 0;
+            } else {
+                $this->cyclePosition ++;
+            }
+        }
+        return $this->cycleValue();
+    }
+
+    /**
+     * Cycles the collection backward by the $retreat amount. If the collection
+     * hits the beginning, it wraps around to the end.
+     *
+     * NOTE: This *does not* affect the main array pointer OR iterators OR arrayaccess.
+     *
+     * @param   int     $retreat    Number of positions to go backwards
+     * @return  mixed   The value of the Collection at this point.
+     */
+    public function cycleBackward($retreat = 1)
+    {
+        for ($i = 0; $i < $retreat; $i ++) {
+            if ($this->cyclePosition == 0) {
+                $this->cyclePosition = $this->count() - 1;
+            } else {
+                $this->cyclePosition --;
+            }
+        }
+        return $this->cycleValue();
+    }
+
+    /**
+     * Gets the value of the collection at the current cycle position.
+     *
+     * @return  mixed
+     */
+    public function cycleValue()
+    {
+        return $this[$this->cyclePosition];
     }
 }
