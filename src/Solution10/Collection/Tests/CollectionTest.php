@@ -884,4 +884,36 @@ class CollectionTest extends PHPUnit_Framework_TestCase
             // No return type!
         });
     }
+
+    /*
+     * -------------------- Testing Plucking ----------------
+     */
+
+    public function testPlucking()
+    {
+        $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+        $plucked = $collection['0,2,4'];
+        $this->assertEquals(array('Alex', 'Charlotte', 'Ellie'), $plucked);
+    }
+
+    public function testPluckingNotFound()
+    {
+        $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+        $plucked = $collection['0,12'];
+        $this->assertEquals(array('Alex'), $plucked);
+    }
+
+    public function testPluckingTrailingComma()
+    {
+        $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+        $plucked = $collection['0,2,4,'];
+        $this->assertEquals(array('Alex', 'Charlotte', 'Ellie'), $plucked);
+    }
+
+    public function testPluckingLeadingComma()
+    {
+        $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+        $plucked = $collection['0,2,4,'];
+        $this->assertEquals(array('Alex', 'Charlotte', 'Ellie'), $plucked);
+    }
 }

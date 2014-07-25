@@ -79,6 +79,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
     protected function addBaseSelectors()
     {
         $this->addSelector('(?P<start>-?[0-9]+):(?P<end>[0-9]+|END)', array($this, 'splice'));
+//        $this->addSelector('', array($this, ));
     }
 
 
@@ -94,11 +95,71 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
         foreach ($this->selectors as $selector => $callback) {
             $regex = '/' . $selector . '/i';
             if (preg_match($regex, $key, $matches)) {
-                return call_user_func_array($callback, array($this, $matches));
+                return call_user_func_array($callback, array($this, $key, $matches));
             }
         }
 
         throw new Exception\Index('Unknown index: ' . $key);
+    }
+
+    /*
+     * ------------------------ Base Selectors --------------------
+     */
+
+    /**
+     * Splices a collection given by a range. You can also use START and END as
+     * keywords.
+     *
+     * Splicing is 1 indexed!!!
+     *
+     *  $result = $collection['1:10']; // Get first 10 items.
+     *
+     * @param   Collection  $collection     Collection we're operating on.
+     * @param   string      $key            The unadultarated key the user passed.
+     * @param   array       $matches        regex matches array
+     * @return  array
+     * @throws  Exception\Bounds
+     */
+    public function splice(Collection $collection, $key, array $matches)
+    {
+        // $collection isn't used as this is an internal function.
+        $start = $matches['start'];
+        $end = $matches['end'];
+
+        // You can use the END keyword to select everything up until an end point.
+        if ($end == 'END') {
+            $end = count($this->contents) - 1;
+        }
+
+        // If the start is negative, we count backwards from the end of the CSV. array_slice can handle negative
+        // offsets, but bounds checking gets a bit gnarly.
+        if ($start < 0) {
+            $start = (count($this->contents)) - abs($start);
+        }
+
+        // Check the bounds:
+        if ($start >= count($this->contents)) {
+            throw new Exception\Bounds(
+                'Start index (' . $start . ') is beyond the end of the file',
+                Exception\Bounds::ERROR_START_OUT_OF_RANGE
+            );
+        } elseif ($start > $end) {
+            throw new Exception\Bounds(
+                'Start index is greater than end index: ' . $start . ' > ' . $end,
+                Exception\Bounds::ERROR_START_GT_END
+            );
+        }
+
+        // If the end index is > the total, we set to the total:
+        if ($end >= count($this->contents)) {
+            $end = count($this->contents) - 1;
+        }
+
+        // Now work out the params for array_slice
+        $offset = $start;
+        $length = ($end - $start) + 1;
+
+        return array_slice($this->contents, $offset, $length);
     }
 
     /*
@@ -128,7 +189,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
 
 
     /**
-     * This function contains a lot of the magic with splicing and such.
+     * This function is the gateway to the short syntax magic.
      *
      * @param   mixed   $offset     INT for numeric index. String splice selector otherwise.
      * @throws  Exception\Index
@@ -142,44 +203,6 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
         } elseif ($offset == ':last') {
             // Shortcut for fetching the last item in the Collection:
             return $this->contents[count($this->contents) - 1];
-        } elseif (preg_match('/(?P<start>-?[0-9]+):(?P<end>[0-9]+|END)/', $offset, $matches)) {
-            $start = $matches['start'];
-            $end = $matches['end'];
-
-            // You can use the END keyword to select everything up until an end point.
-            if ($end == 'END') {
-                $end = count($this->contents) - 1;
-            }
-
-            // If the start is negative, we count backwards from the end of the CSV. array_slice can handle negative
-            // offsets, but bounds checking gets a bit gnarly.
-            if ($start < 0) {
-                $start = (count($this->contents)) - abs($start);
-            }
-
-            // Check the bounds:
-            if ($start >= count($this->contents)) {
-                throw new Exception\Bounds(
-                    'Start index (' . $start . ') is beyond the end of the file',
-                    Exception\Bounds::ERROR_START_OUT_OF_RANGE
-                );
-            } elseif ($start > $end) {
-                throw new Exception\Bounds(
-                    'Start index is greater than end index: ' . $start . ' > ' . $end,
-                    Exception\Bounds::ERROR_START_GT_END
-                );
-            }
-
-            // If the end index is > the total, we set to the total:
-            if ($end >= count($this->contents)) {
-                $end = count($this->contents) - 1;
-            }
-
-            // Now work out the params for array_slice
-            $offset = $start;
-            $length = ($end - $start) + 1;
-
-            return array_slice($this->contents, $offset, $length);
         } else {
             return $this->callSelector($offset);
         }
