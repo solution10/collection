@@ -70,7 +70,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
      */
     public function testAnonFuncSelector()
     {
-        $this->collection->addSelector('::test::', function () {
+        $this->collection->addSelector('::test::', function ($collection, $key, $matches) {
             return true;
         });
 
@@ -893,27 +893,42 @@ class CollectionTest extends PHPUnit_Framework_TestCase
     {
         $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
         $plucked = $collection['0,2,4'];
-        $this->assertEquals(array('Alex', 'Charlotte', 'Ellie'), $plucked);
+        $this->assertEquals(array(0 => 'Alex', 2 => 'Charlotte', 4 => 'Ellie'), $plucked);
     }
 
     public function testPluckingNotFound()
     {
         $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
         $plucked = $collection['0,12'];
-        $this->assertEquals(array('Alex'), $plucked);
+        $this->assertEquals(array(0 => 'Alex'), $plucked);
     }
 
     public function testPluckingTrailingComma()
     {
         $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
         $plucked = $collection['0,2,4,'];
-        $this->assertEquals(array('Alex', 'Charlotte', 'Ellie'), $plucked);
+        $this->assertEquals(array(0 => 'Alex', 2 => 'Charlotte', 4 => 'Ellie'), $plucked);
     }
 
     public function testPluckingLeadingComma()
     {
         $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
         $plucked = $collection['0,2,4,'];
-        $this->assertEquals(array('Alex', 'Charlotte', 'Ellie'), $plucked);
+        $this->assertEquals(array(0 => 'Alex', 2 => 'Charlotte', 4 => 'Ellie'), $plucked);
+    }
+
+    public function testPluckStringKeys()
+    {
+        $collection = new Collection(array('dev' => 'Alex', 'manager' => 'Sarah', 'design' => 'Ellie'));
+        $plucked = $collection['dev,design'];
+        $this->assertEquals(array('dev' => 'Alex', 'design' => 'Ellie'), $plucked);
+    }
+
+    public function testPluckMixedKeys()
+    {
+        $source = array('d3v' => 'Alex', 'mNgMt' => 'Sarah', 'design_lead-awesome' => 'Ellie', 27 => 'Phil');
+        $collection = new Collection($source);
+        $plucked = $collection['d3v,mNgMt,design_lead-awesome,27'];
+        $this->assertEquals($source, $plucked);
     }
 }

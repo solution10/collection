@@ -78,10 +78,9 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
      */
     protected function addBaseSelectors()
     {
-        $this->addSelector('(?P<start>-?[0-9]+):(?P<end>[0-9]+|END)', array($this, 'splice'));
-//        $this->addSelector('', array($this, ));
+        $this->addSelector('(?P<start>-?[0-9]+):(?P<end>[0-9]+|END)', array($this, 'spliceCallback'));
+        $this->addSelector('[0-9a-zA-Z\-_]+,', array($this, 'pluckCallback'));
     }
-
 
     /**
      * Calls a selector or throws an exception if it doesn't know what it is.
@@ -120,7 +119,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
      * @return  array
      * @throws  Exception\Bounds
      */
-    public function splice(Collection $collection, $key, array $matches)
+    public function spliceCallback(Collection $collection, $key, array $matches)
     {
         // $collection isn't used as this is an internal function.
         $start = $matches['start'];
@@ -160,6 +159,29 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
         $length = ($end - $start) + 1;
 
         return array_slice($this->contents, $offset, $length);
+    }
+
+    /**
+     * Implements the plucking behaviour.
+     *
+     * @param   Collection  $collection     Collection we're operating on.
+     * @param   string      $key            The unadultarated key the user passed.
+     * @param   array       $matches        regex matches array
+     * @return  array
+     */
+    public function pluckCallback(Collection $collection, $key, array $matches)
+    {
+        $indexes = explode(',', $key);
+        $result = array();
+        foreach ($indexes as $idx) {
+            $idx = trim($idx);
+            if ($idx != '') {
+                if (array_key_exists($idx, $this->contents)) {
+                    $result[$idx] = $this->contents[$idx];
+                }
+            }
+        }
+        return $result;
     }
 
     /*

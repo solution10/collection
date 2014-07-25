@@ -12,6 +12,7 @@ Like Arrays. Only better!
     1. [Basic Splicing](#basic-splicing)
     2. [Splicing Keywords](#splicing-keywords)
     3. [Splicing Exceptions](#splicing-exceptions)
+7. [Plucking](#plucking)
 6. [Sorting](#sorting)
     1. [Sorting Basics](#sorting-basics)
     2. [Sorting By Member](#sorting-by-member)
@@ -224,6 +225,35 @@ The following table is the Exceptions which can be thrown by Collection around s
 |---------------------------------------|-------------------------------------------------------------------------------------------------------------------|
 |Solution10\Collection\Exception\Bounds | Asking for a start value greater than the count() of the Collection<br>Asking for a start index greater than end  |
 |Solution10\Collection\Exception\Index  | Asking for an unknown index                                                                                       |
+
+
+## Plucking
+
+Collections offer you a way of pulling specified items out of themselves. Let's see how it works:
+
+```php
+$collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+$plucked = $collection['0,2,4'];
+// $plucked is array(0 => 'Alex', 2 => 'Charlotte', 4 => 'Ellie')
+```
+
+If an index doesn't exist in the Collection, you simply won't get it in the result.
+
+```php
+$collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+$plucked = $collection['0,12'];
+// $plucked is array(0 => 'Alex')
+```
+
+Plucking also works for string and mixed keys:
+
+```php
+$collection = new Collection(array('d3v' => 'Alex', 'mNgMt' => 'Sarah', 'design_lead-awesome' => 'Ellie', 27 => 'Phil'));
+$plucked = $collection['d3v,mNgMt,27'];
+// $plucked is array('d3v' => 'Alex', 'mNgMt' => 'Sarah', 27 => 'Phil')
+```
+
+Note that plucked **does** preserve keys!
 
 ## Sorting
 
