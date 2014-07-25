@@ -16,7 +16,10 @@ Like Arrays. Only better!
     1. [Sorting Basics](#sorting-basics)
     2. [Sorting By Member](#sorting-by-member)
     3. [Sorting Exceptions](#sorting-exceptions)
-7. [Getting your Data Back](#getting-your-data-back-keys-and-values)
+7. [Searching](#searching)
+    1. [Simple Searching](#simple-searching)
+    2. [Callback Searching](#callback-searching)
+8. [Getting Data Back](#getting-data-back-keys-and-values)
 
 ## What is a Collection?
 
@@ -332,6 +335,52 @@ The following exceptions can be thrown during sorting:
 |-------------------------------------------|---------------------------------------------------------------------------|
 |Solution10\Collection\Exception\Exception  | Asking for an unknown sort direction.                                     |
 |Solution10\Collection\Exception\Index      | Asking for a sortByMember on an unknown index / property / function.    |
+
+## Searching
+
+Collection offers powerful searching. There are two searching "modes", simple searches and
+callback driven searches.
+
+### Simple Searching
+
+This will loop through the collection and return results that === the search term:
+
+```php
+$c = new Collection(array('England', 'Scotland', 'Ireland', 'Wales'));
+$result = $c->search('Scotland');
+// $result is array(1 => 'Scotland')
+```
+
+Notice how the returned array keys match the key in the collection! This is important and means you
+should only ever foreach() over a resultset as it *will* have indexes missing.
+
+### Callback Searching
+
+If you need more power than just an === search, you can provide a callback function. This function
+will get passed the $term (searchterm) and the $item (current item in Collection). Returning true
+from your callback means this $item will be included in the results. False and it won't.
+
+```php
+$c = new Collection(array(10, 20, 30, 40, 50));
+
+// Search for any value that's less than 30
+$result = $c->search(30, function ($term, $item) {
+    return $item < $term;
+});
+
+// $result is array(0 => 10, 1 => 20)
+```
+
+### Searching Exceptions
+
+If something bad happens during search, you'll get a `Solution10\Collection\Exception\Search` thrown.
+
+The table below shows the codes and their meanings:
+
+| Code                                  | Description                                   |
+|---------------------------------------|-----------------------------------------------|
+| Exception\Search::BAD_CALLBACK        | The callback provided is not a callable type  |
+| Exception\Search::BAD_CALLBACK_RETURN | The callback returned a non-boolean value     |
 
 ## Getting data back (keys and values)
 

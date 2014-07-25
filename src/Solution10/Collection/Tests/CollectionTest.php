@@ -822,4 +822,66 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Mon', $c->cycleBackward(7));
         $this->assertEquals('Fri', $c->cycleBackward(10));
     }
+
+    /*
+     * ----------------- Testing Searching Functionality -----------------
+     */
+
+    public function testSimpleSearch()
+    {
+        $c = new Collection(array('England', 'Scotland', 'Ireland', 'Wales'));
+        $this->assertEquals(array(1 => 'Scotland'), $c->search('Scotland'));
+    }
+
+    public function testSimpleSearchNoResults()
+    {
+        $c = new Collection(array('England', 'Scotland', 'Ireland', 'Wales'));
+        $this->assertEquals(array(), $c->search('France'));
+    }
+
+    public function testSearchCallback()
+    {
+        $c = new Collection(array('England', 'Scotland', 'Ireland', 'Wales'));
+
+        // This callback returns anything that *isn't* the term.
+        $result = $c->search('Scotland', function ($term, $item) {
+            return $term != $item;
+        });
+
+        $this->assertEquals(array(0 => 'England', 2 => 'Ireland', 3 => 'Wales'), $result);
+    }
+
+    public function testSearchCallbackNoResults()
+    {
+        $c = new Collection(array(10, 20, 30, 40, 50));
+
+        // Search for any value that's less than 10
+        $result = $c->search(10, function ($term, $item) {
+            return $item < $term;
+        });
+
+        $this->assertEquals(array(), $result);
+    }
+
+    /**
+     * @expectedException       \Solution10\Collection\Exception\Search
+     * @expectedExceptionCode   \Solution10\Collection\Exception\Search::BAD_CALLBACK
+     */
+    public function testSearchBadCallback()
+    {
+        $c = new Collection();
+        $c->search('monkey', 12);
+    }
+
+    /**
+     * @expectedException       \Solution10\Collection\Exception\Search
+     * @expectedExceptionCode   \Solution10\Collection\Exception\Search::BAD_CALLBACK_RETURN
+     */
+    public function testSearchBadCallbackReturn()
+    {
+        $c = new Collection(array('apple', 'orange', 'banana'));
+        $c->search('monkey', function ($term, $item) {
+            // No return type!
+        });
+    }
 }

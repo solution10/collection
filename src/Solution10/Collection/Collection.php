@@ -140,7 +140,7 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
         if (is_int($offset)) {
             return $this->contents[$offset];
         } elseif ($offset == ':last') {
-            // Shortcut for fetching the last item in the CSV:
+            // Shortcut for fetching the last item in the Collection:
             return $this->contents[count($this->contents) - 1];
         } elseif (preg_match('/(?P<start>-?[0-9]+):(?P<end>[0-9]+|END)/', $offset, $matches)) {
             $start = $matches['start'];
@@ -473,5 +473,56 @@ class Collection implements \Countable, \ArrayAccess, \Iterator
     public function cycleValue()
     {
         return $this[$this->cyclePosition];
+    }
+
+    /*
+     * --------------- Searching Functionality ----------------
+     */
+
+    /**
+     * Searching is dead simple. If you don't provide a callback, then the search
+     * will go through and check $term === $item. If you need something more powerful,
+     * you can provide a function to filter by:
+     *
+     *  function($term, $item) {
+     *      // Returning TRUE means that yes this matches the search. FALSE means no.
+     *  }
+     *
+     * The original keys from the collection are preserved! So if you match items in
+     * index 0 and 3, your array will be array(0 => value, 3 => value)
+     *
+     * @param   mixed           $term       Search term
+     * @param   null|callable   $callback   Search function to use as a filter.
+     * @return  array
+     * @throws  Exception\Search    If the callback is invalid.
+     */
+    public function search($term, $callback = null)
+    {
+        if ($callback !== null && !is_callable($callback)) {
+            throw new Exception\Search('Bad callback passed to search', Exception\Search::BAD_CALLBACK);
+        }
+
+        $result = array();
+        foreach ($this->contents as $key => $value) {
+            if ($callback === null) {
+                $include = ($value === $term);
+            } else {
+                $include = call_user_func_array($callback, array($term, $value));
+
+                // Check that the callback came back with a boolean:
+                if (!is_bool($include)) {
+                    throw new Exception\Search(
+                        'Bad return value from callback: '.$include,
+                        Exception\Search::BAD_CALLBACK_RETURN
+                    );
+                }
+            }
+
+            if ($include) {
+                $result[$key] = $value;
+            }
+        }
+
+        return $result;
     }
 }
