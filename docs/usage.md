@@ -12,11 +12,15 @@ Like Arrays. Only better!
     1. [Basic Splicing](#basic-splicing)
     2. [Splicing Keywords](#splicing-keywords)
     3. [Splicing Exceptions](#splicing-exceptions)
+7. [Plucking](#plucking)
 6. [Sorting](#sorting)
     1. [Sorting Basics](#sorting-basics)
     2. [Sorting By Member](#sorting-by-member)
     3. [Sorting Exceptions](#sorting-exceptions)
-7. [Getting your Data Back](#getting-your-data-back-keys-and-values)
+7. [Searching](#searching)
+    1. [Simple Searching](#simple-searching)
+    2. [Callback Searching](#callback-searching)
+8. [Getting Data Back](#getting-data-back-keys-and-values)
 
 ## What is a Collection?
 
@@ -222,6 +226,35 @@ The following table is the Exceptions which can be thrown by Collection around s
 |Solution10\Collection\Exception\Bounds | Asking for a start value greater than the count() of the Collection<br>Asking for a start index greater than end  |
 |Solution10\Collection\Exception\Index  | Asking for an unknown index                                                                                       |
 
+
+## Plucking
+
+Collections offer you a way of pulling specified items out of themselves. Let's see how it works:
+
+```php
+$collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+$plucked = $collection['0,2,4'];
+// $plucked is array(0 => 'Alex', 2 => 'Charlotte', 4 => 'Ellie')
+```
+
+If an index doesn't exist in the Collection, you simply won't get it in the result.
+
+```php
+$collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+$plucked = $collection['0,12'];
+// $plucked is array(0 => 'Alex')
+```
+
+Plucking also works for string and mixed keys:
+
+```php
+$collection = new Collection(array('d3v' => 'Alex', 'mNgMt' => 'Sarah', 'design_lead-awesome' => 'Ellie', 27 => 'Phil'));
+$plucked = $collection['d3v,mNgMt,27'];
+// $plucked is array('d3v' => 'Alex', 'mNgMt' => 'Sarah', 27 => 'Phil')
+```
+
+Note that plucked **does** preserve keys!
+
 ## Sorting
 
 Collections allow you to sort their contents just like they are real arrays. You can also sort by a property of the items within the collection! Basics first.
@@ -332,6 +365,52 @@ The following exceptions can be thrown during sorting:
 |-------------------------------------------|---------------------------------------------------------------------------|
 |Solution10\Collection\Exception\Exception  | Asking for an unknown sort direction.                                     |
 |Solution10\Collection\Exception\Index      | Asking for a sortByMember on an unknown index / property / function.    |
+
+## Searching
+
+Collection offers powerful searching. There are two searching "modes", simple searches and
+callback driven searches.
+
+### Simple Searching
+
+This will loop through the collection and return results that === the search term:
+
+```php
+$c = new Collection(array('England', 'Scotland', 'Ireland', 'Wales'));
+$result = $c->search('Scotland');
+// $result is array(1 => 'Scotland')
+```
+
+Notice how the returned array keys match the key in the collection! This is important and means you
+should only ever foreach() over a resultset as it *will* have indexes missing.
+
+### Callback Searching
+
+If you need more power than just an === search, you can provide a callback function. This function
+will get passed the $term (searchterm) and the $item (current item in Collection). Returning true
+from your callback means this $item will be included in the results. False and it won't.
+
+```php
+$c = new Collection(array(10, 20, 30, 40, 50));
+
+// Search for any value that's less than 30
+$result = $c->search(30, function ($term, $item) {
+    return $item < $term;
+});
+
+// $result is array(0 => 10, 1 => 20)
+```
+
+### Searching Exceptions
+
+If something bad happens during search, you'll get a `Solution10\Collection\Exception\Search` thrown.
+
+The table below shows the codes and their meanings:
+
+| Code                                  | Description                                   |
+|---------------------------------------|-----------------------------------------------|
+| Exception\Search::BAD_CALLBACK        | The callback provided is not a callable type  |
+| Exception\Search::BAD_CALLBACK_RETURN | The callback returned a non-boolean value     |
 
 ## Getting data back (keys and values)
 

@@ -1,5 +1,10 @@
 # Solution10\Collection Changelog
 
+**v1.2**
+
+- Added searching fuction
+- Added ability to pluck individual items out
+
 **v1.1**
 
 - Added Cycling functionality

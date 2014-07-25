@@ -70,7 +70,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
      */
     public function testAnonFuncSelector()
     {
-        $this->collection->addSelector('::test::', function () {
+        $this->collection->addSelector('::test::', function ($collection, $key, $matches) {
             return true;
         });
 
@@ -821,5 +821,114 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         $c = new Collection(array('Mon', 'Tues', 'Weds', 'Thurs', 'Fri', 'Sat', 'Sun'));
         $this->assertEquals('Mon', $c->cycleBackward(7));
         $this->assertEquals('Fri', $c->cycleBackward(10));
+    }
+
+    /*
+     * ----------------- Testing Searching Functionality -----------------
+     */
+
+    public function testSimpleSearch()
+    {
+        $c = new Collection(array('England', 'Scotland', 'Ireland', 'Wales'));
+        $this->assertEquals(array(1 => 'Scotland'), $c->search('Scotland'));
+    }
+
+    public function testSimpleSearchNoResults()
+    {
+        $c = new Collection(array('England', 'Scotland', 'Ireland', 'Wales'));
+        $this->assertEquals(array(), $c->search('France'));
+    }
+
+    public function testSearchCallback()
+    {
+        $c = new Collection(array('England', 'Scotland', 'Ireland', 'Wales'));
+
+        // This callback returns anything that *isn't* the term.
+        $result = $c->search('Scotland', function ($term, $item) {
+            return $term != $item;
+        });
+
+        $this->assertEquals(array(0 => 'England', 2 => 'Ireland', 3 => 'Wales'), $result);
+    }
+
+    public function testSearchCallbackNoResults()
+    {
+        $c = new Collection(array(10, 20, 30, 40, 50));
+
+        // Search for any value that's less than 10
+        $result = $c->search(10, function ($term, $item) {
+            return $item < $term;
+        });
+
+        $this->assertEquals(array(), $result);
+    }
+
+    /**
+     * @expectedException       \Solution10\Collection\Exception\Search
+     * @expectedExceptionCode   \Solution10\Collection\Exception\Search::BAD_CALLBACK
+     */
+    public function testSearchBadCallback()
+    {
+        $c = new Collection();
+        $c->search('monkey', 12);
+    }
+
+    /**
+     * @expectedException       \Solution10\Collection\Exception\Search
+     * @expectedExceptionCode   \Solution10\Collection\Exception\Search::BAD_CALLBACK_RETURN
+     */
+    public function testSearchBadCallbackReturn()
+    {
+        $c = new Collection(array('apple', 'orange', 'banana'));
+        $c->search('monkey', function ($term, $item) {
+            // No return type!
+        });
+    }
+
+    /*
+     * -------------------- Testing Plucking ----------------
+     */
+
+    public function testPlucking()
+    {
+        $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+        $plucked = $collection['0,2,4'];
+        $this->assertEquals(array(0 => 'Alex', 2 => 'Charlotte', 4 => 'Ellie'), $plucked);
+    }
+
+    public function testPluckingNotFound()
+    {
+        $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+        $plucked = $collection['0,12'];
+        $this->assertEquals(array(0 => 'Alex'), $plucked);
+    }
+
+    public function testPluckingTrailingComma()
+    {
+        $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+        $plucked = $collection['0,2,4,'];
+        $this->assertEquals(array(0 => 'Alex', 2 => 'Charlotte', 4 => 'Ellie'), $plucked);
+    }
+
+    public function testPluckingLeadingComma()
+    {
+        $collection = new Collection(array('Alex', 'Bob', 'Charlotte', 'Diana', 'Ellie', 'Frank'));
+        $plucked = $collection['0,2,4,'];
+        $this->assertEquals(array(0 => 'Alex', 2 => 'Charlotte', 4 => 'Ellie'), $plucked);
+    }
+
+    public function testPluckStringKeys()
+    {
+        $collection = new Collection(array('dev' => 'Alex', 'manager' => 'Sarah', 'design' => 'Ellie'));
+        $plucked = $collection['dev,design'];
+        $this->assertEquals(array('dev' => 'Alex', 'design' => 'Ellie'), $plucked);
+    }
+
+    public function testPluckMixedKeys()
+    {
+        $source = array('d3v' => 'Alex', 'mNgMt' => 'Sarah', 'design_lead-awesome' => 'Ellie', 27 => 'Phil');
+        $collection = new Collection($source);
+        $plucked = $collection['d3v,mNgMt,design_lead-awesome,27'];
+        $this->assertEquals($source, $plucked);
     }
 }
