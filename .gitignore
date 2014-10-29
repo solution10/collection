@@ -1,5 +1,11 @@
+# Filesystem crap
 .DS_Store
-vendor/
+
+# IDE crap
 .idea
-report
+
+# Generated files/folders
 api/
+report/
+vendor/
+apigen.neon
