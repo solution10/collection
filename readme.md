@@ -18,7 +18,7 @@ Splice subsections of arrays simply by passing keys:
 
 ```php
 $collection = new Collection(array('Apple', 'Orange', 'Banana'));
-$subset = $collection['1:2'];
+$subset = $collection['0:1'];
 // $subset is now: array('Apple', 'Orange')
 
 $collection = new Collection(array('Apple', 'Orange', 'Banana'));

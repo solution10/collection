@@ -163,13 +163,13 @@ Splicing allows you to quickly retrieve a subset of the collection based on its 
 
 Splicing involves accessing a key in the Collection of the format start:end where start and end are numeric indexes in the collection.
 
-**Splicing is 1-indexed!** - Don't forget this!
+**Splicing is 0-indexed!** - Don't forget this!
 
-So asking for 1:1 will grab the first element. 1:2 will grab the first two elements. etc
+So asking for 0:0 will grab the first element. 1:2 will grab the second and third elements. etc
 
 ```php
 $collection = new Collection(array('Apple', 'Orange', 'Banana'));
-$subset = $collection['1:2'];
+$subset = $collection['0:1'];
 
 // $subset is now: array('Apple', 'Orange')
 ```
@@ -205,7 +205,7 @@ Sometimes you won't know how many items are in the Collection, or just want to m
 $collection = new Collection(array('Apple', 'Orange', 'Banana', 'Grapes'));
 $subset = $collection['2:END'];
 
-// $subset contains ('Orange', 'Banana', 'Grapes')
+// $subset contains ('Banana', 'Grapes')
 ```
 
 There's also a shortcut to fetching the last item in the collection, the LAST keyword:
